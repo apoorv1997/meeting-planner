@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" [routerLink]="['/normalDashboard']">Meeting Scheduler</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+  <div class="row">
+    <div class="p-3"></div>
+    <ul class="list-group" style="width:100%;text-align:center;margin: 0 5% 0 5%" *ngIf="event">
+      <li class="list-group-item list-group-item-info">Title:{{event.title}}</li>
+      <li class="list-group-item">Purpose:{{event.purpose}}</li>
+      <li class="list-group-item">Color Primary: <span [ngStyle]="{'color':event.colorPrimary,'background':event.colorPrimary}">|||||</span></li>
+      <li class="list-group-item">Color Secoundry:<span [ngStyle]="{'color':event.colorSecoundry,'background':event.colorSecoundry}">|||||</span></li>
+      <li class="list-group-item">Start: {{event.start | date:short}}</li>
+      <li class="list-group-item">End: {{event.end | date:short}}</li>
+      <span *ngIf="users">
+      <li class="list-group-item">Participants: <span *ngFor="let x of users;let last=last"> {{x.firstName}} {{x.lastName}}{{last?'.':','}}</span></li>
+      </span>
+      <li class="list-group-item">Created By: {{event.createdByName}}</li>
+    </ul>
+    <div class="p-3 col-12" *ngIf="!event" style="text-align:center">
+      <h3>ooh Snap!!!</h3>
+      <br>
+      <b>There is No event Here...:( </b>
+    </div>
+    <br>
+    <button class="btn btn-warning" style="margin:5% 0 0 5%" (click)="location.back()">Go Back</button>
+  </div>
+</div>

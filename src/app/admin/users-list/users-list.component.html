@@ -1,0 +1,29 @@
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" [routerLink]="['/usersList']">Meeting Scheduler</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" (click)="logOut()">LogOut</a>
+          </li>
+        </ul>
+    </div>
+  </nav>
+  <div class="row">
+    <div class="col-12 p-3"></div>
+    <div class="col-12" *ngIf="users">
+      <ul class="list-group" style="width:100%;text-align: center">
+        <li class="list-group-item list-group-item-dark">
+          <span style="font-size:1.3em" class="letterClass">User's List</span>
+        </li>
+        <span *ngFor="let user of users">
+          <li class="list-group-item list-group-item-light" [routerLink]="['/adminDashboard/'+user.userId]">{{user.firstName}}
+            {{user.lastName}}</li>
+        </span>
+      </ul>
+    </div>
+  </div>

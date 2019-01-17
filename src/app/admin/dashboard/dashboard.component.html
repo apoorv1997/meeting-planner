@@ -1,0 +1,152 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" [routerLink]="['/usersList']">Meeting Scheduler</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" (click)="logOut()" style="cursor:pointer">LogOut</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <div class="p-2"></div>
+  <ng-template #modalContent let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Event action occurred</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Action:
+        <pre>{{ modalData?.action }}</pre>
+      </div>
+      <div>
+        Event:
+        <pre>{{ modalData?.event | json }}</pre>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <span *ngIf="socketData">
+          <button type="button" class="btn btn-outline-secondary" [routerLink]="['/view/'+socketData.eventId]" (click)="close()">view</button>
+        </span>
+        <span *ngIf="eventInterval && socketData">
+          <button type="button" class="btn btn-outline-secondary" (click)="close()">snooze</button>
+        </span>
+        <button type="button" class="btn btn-outline-secondary" (click)="close();closeEventInterval()">OK</button>
+      </div>
+  </ng-template>
+
+  <div class="row text-center">
+    <div class="col-md-4">
+      <div class="btn-group">
+        <button class="btn btn-primary" (click)="decrement()" [disabled]="prevBtnDisabled">
+          Previous
+        </button>
+        <button class="btn btn-outline-secondary" (click)="today()">
+          Today
+        </button>
+        <button class="btn btn-primary" (click)="increment()" [disabled]="nextBtnDisabled">
+          Next
+        </button>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    </div>
+    <div class="col-md-4">
+      <div class="btn-group">
+        <div class="btn btn-primary" (click)="view = CalendarView.Month;changeView('month')" [class.active]="view === 'month'">
+          Month
+        </div>
+        <div class="btn btn-primary" (click)="view = CalendarView.Week;changeView('week')" [class.active]="view ==='week'">
+          Week
+        </div>
+        <div class="btn btn-primary" (click)="view = CalendarView.Day;changeView('day')" [class.active]="view === 'day'">
+          Day
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div [ngSwitch]="view">
+    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
+      [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)" (beforeViewRender)="beforeMonthViewRender($event)">
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
+      (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
+      (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+    </mwl-calendar-day-view>
+  </div>
+
+  <br><br><br>
+
+  <h3>
+    Events Lists
+    <button class="btn btn-primary pull-right" (click)="addEvent()">
+      Add new
+    </button>
+    <div class="clearfix"></div>
+  </h3>
+
+  <table class="table table-bordered">
+
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Primary color</th>
+        <th>Secondary color</th>
+        <th>Starts at</th>
+        <th>Ends at</th>
+        <th>Edit & Remove</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let event of events; let index = index">
+        <td>
+          <!-- <input type="text" class="form-control" [(ngModel)]="event.title" (keyup)="refresh.next()"> -->
+          {{event.title}}
+        </td>
+        <td>
+          <!-- <input type="color" [(ngModel)]="event.color.primary" (change)="refresh.next()"> -->
+          <div [ngStyle]="{background:event.color.primary,color:event.color.primary}">___</div>
+        </td>
+        <td>
+          <!-- <input type="color" [(ngModel)]="event.color.secondary" (change)="refresh.next()"> -->
+          <div [ngStyle]="{background:event.color.secondary,color:event.color.secondary}">___</div>
+        </td>
+        <td>
+          <!-- <input class="form-control" type="text" mwlFlatpickr [(ngModel)]="event.start" (ngModelChange)="refresh.next()"
+            [altInput]="true" [convertModelValue]="true" [enableTime]="true" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i"
+            placeholder="Not set"> -->
+            {{event.start | date}}-{{event.start | date:'hh'}}:{{event.start | date:'mm'}}:{{event.start | date:'ss'}}
+          </td>
+        <td>
+          <!-- <input class="form-control" type="text" mwlFlatpickr [(ngModel)]="event.end" (ngModelChange)="refresh.next()"
+            [altInput]="true" [convertModelValue]="true" [enableTime]="true" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i"
+            placeholder="Not set"> -->
+            {{event.end | date}}-{{event.end | date:'hh'}}:{{event.end | date:'mm'}}:{{event.end | date:'ss'}}
+          </td>
+        <td>
+          <button class="btn btn-info" [routerLink]="['/edit/'+event.id]">
+            edit
+          </button>
+          <button class="btn btn-danger" (click)="events.splice(index, 1); refresh.next();deleteEvent(event.id)" style="margin-left:5%">
+            delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-secondary" style="margin:5% 2% 5% 0" (click)="loadMore()">Load More Events</button>
+  <button class="btn btn-warning" style="margin:5% 0 5% 0" (click)="location.back()">Go Back</button>
+</div>

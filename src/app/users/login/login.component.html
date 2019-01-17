@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Meeting Scheduler</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" (click)="goToSignUp()" style="cursor:pointer">Sign-Up</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="row p-0 m-0">
+  <div class="col-sm"></div>
+  <div class="col-sm p-5">
+    <h2 class="form-signin-heading">Please sign in</h2>
+    <form #createEventForm="ngForm" (ngSubmit)="signinFunction()">
+      <div class="form-group">
+        <label for="email" class="sr-only">Email address</label>
+        <input type="text" id="email" class="form-control" [(ngModel)]="email" name="email" placeholder="Email address"
+          required autofocus>
+      </div>
+      <br>
+      <div class="form-group">
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" [(ngModel)]="password" name="password" placeholder="Password"
+          required>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-12">
+          <button class="btn btn-lg btn-primary btn-block" [disabled]="!createEventForm.form.valid" type="submit">Sign in</button>
+          <br>
+          <button class="btn btn-lg btn-danger btn-block" type="button" (click)="forgotPasswordFunction()">Forgot
+            Password</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-sm"></div>
+</div>

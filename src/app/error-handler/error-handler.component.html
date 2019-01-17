@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col-12 textAlign">
+    <h2>{{errorCode}}</h2>
+    <h3>ooh Snap!!!</h3>
+    <br>
+  </div>
+  <div *ngIf="errorCode==404" class="col-12 textAlign">
+    The Thing You are looking for does Not exist
+  </div>
+  <div *ngIf="errorCode==500" class="col-12 textAlign">
+    There was an error in server
+  </div>
+  <div *ngIf="errorCode!=500 || errorCode !=404" class="col-12 textAlign">
+    something wrong happened
+  </div>
+</div>
